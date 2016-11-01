@@ -39,16 +39,19 @@ int main(void) {
 		case 1 : {
 			user.stage = 1;
 			saveProgress(user);
-			if (result != puzzle1()) break;
+			if ((result = puzzle1()) == 0) break;
 		}
 		case 2 : {
 			user.stage = 2;
 			saveProgress(user);
-			if (result != puzzle2()) break;
+			if ((result = puzzle2()) == 0 ) break;
 		}
 		default: {	// game passed
+			// reset stage
+			user.stage = 0;
+			saveProgress(user);
 			DIS_RED("\n============  CONGRATULATIONS  ============\n");
-			DIS_RED("You have won the game.\n");
+			DIS_RED("You have won the game.\n\n");
 		}
 	}
 
@@ -57,7 +60,7 @@ int main(void) {
 		DIS_RED("\n===============  GAME OVER  ===============\n");
 		DIS_RED("Mama once said, life takes unexpected turns.\n\n");
 	}
-	
+
 	return 0;
 }
 
@@ -75,9 +78,11 @@ int puzzle1(void) {
 
 int puzzle2(void) {
 	DIS_MAGENTA("\n    ======= STAGE 2 =======\n"); 
-	DIS_GREEN("Enter the password\n");
+	DIS_GREEN("Enter the lucky number\n");
+	PROMPT(); 
 	int temp_asw;
-	PROMPT(); temp_asw = getchar();
+	scanf("%d", &temp_asw);
+	
 	if(temp_asw == 0)
 		return 1;
 	else
@@ -96,13 +101,11 @@ profile_t readProgress(void) {
 		printf("File \"profile.txt\" doesn't exist, create a new one.\n");
 		user.stage = 0;
 		user.infoA = 0;
-		user.infoB = 0.0;
+		user.infoB = 0;
 	} else {
-		while (!feof(infile) && (i < INFO_NUM)) {
-			if (fscanf(infile, "%d", &temp[i]) != EOF) {
-				printf("Value read: %d\n", temp[i]);
-				i++;
-			}
+		while ((fscanf(infile, "%d", &temp[i]) != EOF) && (i < INFO_NUM)) {
+			printf("Value read: %d\n", temp[i]);
+			i++;
 		}
 		user.stage = temp[0];
 		user.infoA = temp[1];
